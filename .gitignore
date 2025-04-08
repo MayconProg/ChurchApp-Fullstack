@@ -6,3 +6,4 @@ client/.env*
 # Server
 server/node_modules/
 server/.env*
+server/generated/prisma

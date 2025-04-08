@@ -1,0 +1,184 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  CANCELLED
+}
+
+enum OrderPayment {
+  BANK_TRANSFER
+  CREDIT_CARD
+  DEBIT_CARD
+  PIX
+}
+
+model User {
+  id              String            @id @default(uuid())
+  name            String
+  email           String            @unique
+  password        String
+  image           String
+  role            UserRole          @default(USER)
+  createdAt       DateTime          @default(now())
+  usersOnCourses  UsersOnCourses[]
+  Order           Order[]
+  CourseComments  CourseComments[]
+  CourseRatings   CourseRatings[]
+  ProductRatings  ProductRatings[]
+  ProductComments ProductComments[]
+
+  @@map("users")
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Decimal
+  image       String
+  createdAt   DateTime @default(now())
+
+  contents       Content[]
+  usersOnCourses UsersOnCourses[]
+  courseComments CourseComments[]
+  courseRatings  CourseRatings[]
+  Order          Order[]
+
+  @@map("courses")
+}
+
+// Explicit Relation
+model UsersOnCourses {
+  users    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  courses  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String
+
+  enrollAt DateTime @default(now())
+
+  @@id([userId, courseId])
+}
+
+model Content {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  image       String
+  url         String
+  files       String[]
+  createdAt   DateTime @default(now())
+
+  courseId String
+  courses  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("contents")
+}
+
+model CourseComments {
+  id        String   @id @default(uuid())
+  text      String
+  createdAt DateTime @default(now())
+
+  userId String
+  users  User   @relation(fields: [userId], references: [id])
+
+  courseId String
+  courses  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("courseComments")
+}
+
+model CourseRatings {
+  id        String   @id @default(uuid())
+  value     Int
+  createdAt DateTime @default(now())
+
+  userId String
+  users  User   @relation(fields: [userId], references: [id])
+
+  courseId String
+  courses  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("courseRatings")
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  description   String
+  price         Decimal
+  stockQuantity Int
+  images        String[]
+  createdAt     DateTime @default(now())
+
+  ProductComments ProductComments[]
+  ProductRatings  ProductRatings[]
+  orders          Order[]
+
+  @@map("products")
+}
+
+model ProductComments {
+  id        String   @id @default(uuid())
+  text      String
+  createdAt DateTime @default(now())
+
+  userId String
+  users  User   @relation(fields: [userId], references: [id])
+
+  productId String
+  products  Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("productComments")
+}
+
+model ProductRatings {
+  id        String   @id @default(uuid())
+  value     Int
+  createdAt DateTime @default(now())
+
+  userId String
+  users  User   @relation(fields: [userId], references: [id])
+
+  productId String
+  products  Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("productRatings")
+}
+
+model Order {
+  id           String       @id @default(uuid())
+  status       OrderStatus  @default(PENDING)
+  payment_type OrderPayment @default(BANK_TRANSFER)
+  total_amount Decimal
+  createdAt    DateTime     @default(now())
+
+  userId String
+  users  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  products Product[]
+  courses  Course[]
+
+  @@map("orders")
+}
