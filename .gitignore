@@ -7,3 +7,5 @@ client/.env*
 server/node_modules/
 server/.env*
 server/generated/prisma
+
+Todo.md
