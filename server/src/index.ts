@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import cors from "cors";
+import { userRouter } from "./routes/UserRoutes";
 
 dotenv.config();
 
@@ -17,6 +18,8 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World!" });
 });
+
+app.use("/api/users", userRouter);
 
 const port = Number(process.env.PORT) || 2108;
 

@@ -38,7 +38,7 @@ model User {
   name            String
   email           String            @unique
   password        String
-  image           String
+  image           String?
   role            UserRole          @default(USER)
   createdAt       DateTime          @default(now())
   usersOnCourses  UsersOnCourses[]
@@ -101,7 +101,7 @@ model CourseComments {
   createdAt DateTime @default(now())
 
   userId String
-  users  User   @relation(fields: [userId], references: [id])
+  users  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   courseId String
   courses  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
@@ -115,7 +115,7 @@ model CourseRatings {
   createdAt DateTime @default(now())
 
   userId String
-  users  User   @relation(fields: [userId], references: [id])
+  users  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   courseId String
   courses  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
@@ -145,7 +145,7 @@ model ProductComments {
   createdAt DateTime @default(now())
 
   userId String
-  users  User   @relation(fields: [userId], references: [id])
+  users  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   productId String
   products  Product @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -159,7 +159,7 @@ model ProductRatings {
   createdAt DateTime @default(now())
 
   userId String
-  users  User   @relation(fields: [userId], references: [id])
+  users  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   productId String
   products  Product @relation(fields: [productId], references: [id], onDelete: Cascade)
