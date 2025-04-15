@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import cors from "cors";
 import { userRouter } from "./routes/UserRoutes";
+import { courseRouter } from "./routes/CourseRoutes";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/users", userRouter);
+app.use("/api/courses", courseRouter);
 
 const port = Number(process.env.PORT) || 2108;
 

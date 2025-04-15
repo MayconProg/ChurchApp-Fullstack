@@ -53,7 +53,7 @@ model User {
 
 model Course {
   id          String   @id @default(uuid())
-  name        String
+  title       String
   description String
   price       Decimal
   image       String
